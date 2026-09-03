@@ -1,0 +1,187 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.dashboard {
+  max-width: 1250px;
+  margin: auto;
+  padding: 40px 24px 80px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #64748b;
+}
+
+h1 {
+  margin: 5px 0;
+  font-size: 38px;
+}
+
+h2 {
+  margin-top: 40px;
+  margin-bottom: 18px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.metric-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.metric-card h3 {
+  font-size: 27px;
+  margin: 10px 0;
+}
+
+.metric-card span {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.decision-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  border: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+}
+
+.decision-card h2 {
+  margin: 5px 0;
+  font-size: 30px;
+}
+
+.score {
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.score span {
+  font-size: 16px;
+  color: #64748b;
+}
+
+.conditions {
+  grid-column: 1 / -1;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 18px;
+}
+
+.risk-list {
+  display: grid;
+  gap: 12px;
+}
+
+.risk-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.risk-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  background: #f1f5f9;
+}
+
+.risk-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.risk-header h3 {
+  margin: 0;
+}
+
+.risk-card p {
+  color: #475569;
+}
+
+.risk-card small {
+  color: #64748b;
+}
+
+.chart-card,
+.source-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.source-card {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.source-card span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+@media (max-width: 800px) {
+  .metric-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .source-card {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 500px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard {
+    padding: 25px 15px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+}
