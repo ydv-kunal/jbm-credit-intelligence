@@ -10,7 +10,7 @@ const generateDecision = (risk) => {
 
     if (risk.score >= 60) {
         return {
-            decision: "REVIEW",
+            decision: "APPROVE WITH CONDITIONS",
             confidence: "Medium",
             reason:
                 "The company demonstrates reasonable financial strength, but some risk factors require additional review.",

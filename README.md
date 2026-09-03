@@ -16,7 +16,7 @@ The system evaluates reported 3-year financial performance (FY2024–FY2026), as
 
 - **Facility-Specific Credit Assessment**: Interactive loan parameters submission (Loan Amount, Purpose) returning an immediate risk score, decision recommendation, and confidence level.
 - **Single Source of Truth**: Eliminates duplicate or conflicting metrics by displaying one primary facility assessment result.
-- **Risk & Opportunity Financial Signals**: Highlights key financial signals (Revenue Growth, Profitability, Interest Coverage, Free Cash Flow, Working Capital) with status indicators and lending impact notes.
+- **Risk & Opportunity Financial Signals**: Highlights key financial signals (Revenue Growth, Profitability, Interest Coverage, Free Cash Flow, Working Capital, Facility Exposure) with status indicators and lending impact notes.
 - **Expandable Calculation Methodology**: Collapsible derivation section displaying exact formulas, underlying financial input figures, and point deductions.
 - **Evidence & Data Sources Provenance**: Data source attribution (`Screener.in`), confidence level, financial period covered, clickable external reference URL, and dataset reliability notes.
 - **Resilient UI/UX**: Includes real-time client-side form validation, active loading indicators, anti-stale error banners on API failure, and empty dataset handling.
@@ -104,7 +104,7 @@ React Frontend (App.jsx)
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/your-repo/jbm-credit-intelligence.git
+git clone https://github.com/ydv-kunal/jbm-credit-intelligence.git
 cd jbm-credit-intelligence
 ```
 
@@ -186,8 +186,8 @@ npm run dev
     "period": { "previousYear": 2025, "currentYear": 2026 },
     "financials": [ ... ],
     "metrics": { ... },
-    "risk": { "score": 77, "riskLevel": "Moderate", "factors": [ ... ] },
-    "decision": { "decision": "REVIEW", "confidence": "Medium" }
+    "risk": { "score": 65, "riskLevel": "Moderate", "factors": [ ... ] },
+    "decision": { "decision": "APPROVE WITH CONDITIONS", "confidence": "Medium" }
   }
   ```
 
@@ -216,7 +216,10 @@ npm run dev
       "interestCoverage": 2.13,
       "debtToRevenue": 0.31,
       "freeCashFlow": -358,
-      "debtorDays": 131
+      "debtorDays": 131,
+      "facilityExposureRatio": 0.02,
+      "facilityExposureDeduction": 0,
+      "facilityExposureBand": "≤ 1%"
     },
     "period": "FY2024-FY2026",
     "source": {
@@ -250,31 +253,53 @@ The scoring engine evaluates corporate creditworthiness starting from a baseline
 
 $$Score = \max\left(0, \min\left(100, 100 - \sum \text{Penalties}\right)\right)$$
 
+The credit decision engine maps the final numerical score strictly to one of three standardized underwriting recommendations:
+
 - **Score ≥ 80** $\rightarrow$ **Low Risk** $\rightarrow$ `APPROVE`
 - **Score 60 – 79** $\rightarrow$ **Moderate Risk** $\rightarrow$ `APPROVE WITH CONDITIONS`
 - **Score < 60** $\rightarrow$ **High Risk** $\rightarrow$ `DECLINE`
 
 ---
 
-## 11. Data Source & Provenance
+## 11. Traceability & Chain of Evidence
 
-- **Data Source Name**: `Screener.in`
+The platform provides an end-to-end audit trail allowing credit analysts to trace any recommendation back to its underlying raw data:
+
+```
+Recommendation (APPROVE / APPROVE WITH CONDITIONS / DECLINE)
+     │
+     ▼
+Risk & Opportunity Financial Signals (Status, Value & Lending Significance)
+     │
+     ▼
+Calculation Methodology & Derivation (Formulas, Inputs & Point Deductions)
+     │
+     ▼
+Reported Consolidated Financial Data (MongoDB 3-Year Records)
+     │
+     ▼
+Evidence & Data Sources (Screener.in Metadata, Confidence & Reference URL)
+```
+
+---
+
+## 12. Data Source, Provenance & Reliability
+
+- **Primary Structured Source**: `Screener.in`
 - **Source Type**: Secondary structured public filings
 - **Entity Evaluated**: JBM Auto Limited (Consolidated Financial Statements)
 - **Financial Period**: FY2024 – FY2026 (3 Reported Financial Years)
 - **Source Reference URL**: [https://www.screener.in/company/JBMA/consolidated/](https://www.screener.in/company/JBMA/consolidated/)
 
+### Data Reliability & Limitations Note
+1. **Single Source Evaluation**: The model evaluates reported consolidated public filings from Screener.in.
+2. **Reconciliation Boundary**: Automatic cross-source reconciliation between multiple conflicting external APIs is not currently implemented because only one structured public source dataset is ingested.
+3. **Qualitative Scope**: Qualitative promoter background checks, physical site audits, and off-balance-sheet contingent liabilities are not evaluated by this automated model.
+
 ---
 
-## 12. Validation & Error Handling
+## 13. Validation & Error Handling
 
 - **Form Input Validation**: Blocks invalid, empty (`""`), negative (`< 0`), or zero (`0`) loan amounts and unselected loan purposes with real-time inline warning banners (`Please enter a valid loan amount greater than ₹0`).
 - **State Resiliency**: On API failure or server connection loss, the frontend clears stale assessment state (`setAssessment(null)`) and renders an explicit inline error banner (`Unable to complete assessment. Please try again.`).
 - **Empty Dataset State**: Displays an empty state screen if financial data is missing from MongoDB.
-
----
-
-## 13. Important Assumptions & Limitations
-
-1. **Secondary Data Source**: Assessment relies on reported 3-year consolidated public filings sourced from Screener.in.
-2. **Automated Scope**: Qualitative promoter background checks, physical site visits, plant operations, and off-balance-sheet contingent liabilities are not evaluated by this rule-based automated model.
