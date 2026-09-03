@@ -290,45 +290,61 @@ router.post("/assess", async (req, res) => {
         // Facility Exposure
         const facilityExposureRatio = (loanAmount / latest.revenue) * 100;
         let facilityExposureDeduction = 0;
+        let facilityExposureBand = "≤ 1%";
 
-        if (facilityExposureRatio <= 2) {
+        if (facilityExposureRatio <= 1) {
             facilityExposureDeduction = 0;
+            facilityExposureBand = "≤ 1%";
             factors.push({
                 factor: "Facility Exposure",
                 status: "Positive",
-                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue.`,
+                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue (Band: ≤ 1%).`,
                 value: `${facilityExposureRatio.toFixed(2)}% Exposure`,
-                whyItMatters: "Low facility exposure (≤2% of revenue) represents minimal balance sheet stress and high absorption capability.",
+                whyItMatters: "Low facility exposure (≤1% of revenue) represents minimal balance sheet stress and high absorption capability.",
             });
-        } else if (facilityExposureRatio <= 5) {
-            facilityExposureDeduction = 5;
-            score -= 5;
+        } else if (facilityExposureRatio <= 2) {
+            facilityExposureDeduction = 3;
+            facilityExposureBand = "> 1% & ≤ 2%";
+            score -= 3;
             factors.push({
                 factor: "Facility Exposure",
                 status: "Moderate",
-                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue.`,
+                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue (Band: > 1% & ≤ 2%).`,
                 value: `${facilityExposureRatio.toFixed(2)}% Exposure`,
-                whyItMatters: "Moderate facility exposure (2%–5% of revenue) requires active monitoring of debt service coverage.",
+                whyItMatters: "Modest facility exposure (1%–2% of revenue) poses low incremental risk to existing cash flow headroom.",
             });
-        } else if (facilityExposureRatio <= 10) {
-            facilityExposureDeduction = 10;
-            score -= 10;
+        } else if (facilityExposureRatio <= 4) {
+            facilityExposureDeduction = 7;
+            facilityExposureBand = "> 2% & ≤ 4%";
+            score -= 7;
             factors.push({
                 factor: "Facility Exposure",
                 status: "Moderate",
-                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue.`,
+                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue (Band: > 2% & ≤ 4%).`,
                 value: `${facilityExposureRatio.toFixed(2)}% Exposure`,
-                whyItMatters: "Significant facility exposure (5%–10% of revenue) increases credit risk requiring strict covenants or collateral.",
+                whyItMatters: "Moderate facility exposure (2%–4% of revenue) requires active monitoring of debt service coverage.",
             });
-        } else {
-            facilityExposureDeduction = 20;
-            score -= 20;
+        } else if (facilityExposureRatio <= 6) {
+            facilityExposureDeduction = 11;
+            facilityExposureBand = "> 4% & ≤ 6%";
+            score -= 11;
             factors.push({
                 factor: "Facility Exposure",
                 status: "Risk",
-                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue.`,
+                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue (Band: > 4% & ≤ 6%).`,
                 value: `${facilityExposureRatio.toFixed(2)}% Exposure`,
-                whyItMatters: "High facility exposure (>10% of revenue) poses substantial financial leverage risk and default exposure.",
+                whyItMatters: "Elevated facility exposure (4%–6% of revenue) increases credit risk requiring strict financial covenants.",
+            });
+        } else {
+            facilityExposureDeduction = 16;
+            facilityExposureBand = "> 6%";
+            score -= 16;
+            factors.push({
+                factor: "Facility Exposure",
+                status: "Risk",
+                message: `Requested facility of ₹${loanAmount} Cr is ${facilityExposureRatio.toFixed(2)}% of annual revenue (Band: > 6%).`,
+                value: `${facilityExposureRatio.toFixed(2)}% Exposure`,
+                whyItMatters: "High facility exposure (>6% of revenue) poses substantial financial leverage risk and debt service pressure.",
             });
         }
 
@@ -386,6 +402,7 @@ router.post("/assess", async (req, res) => {
                 debtorDays: latest.debtorDays,
                 facilityExposureRatio: Number(facilityExposureRatio.toFixed(2)),
                 facilityExposureDeduction: facilityExposureDeduction,
+                facilityExposureBand: facilityExposureBand,
             },
 
             period: "FY2024-FY2026",

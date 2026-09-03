@@ -699,6 +699,7 @@ function MethodologySection({ assessment, latest, previous }) {
   const loanAmt = assessment?.assessment?.loanAmount || 1;
   const exposureRatioVal = ((loanAmt / latest.revenue) * 100).toFixed(2);
   const exposureDeduction = assessment?.metrics?.facilityExposureDeduction ?? 0;
+  const exposureBand = assessment?.metrics?.facilityExposureBand ?? (exposureRatioVal <= 1 ? "≤ 1%" : exposureRatioVal <= 2 ? "> 1% & ≤ 2%" : exposureRatioVal <= 4 ? "> 2% & ≤ 4%" : exposureRatioVal <= 6 ? "> 4% & ≤ 6%" : "> 6%");
 
   const scoreDeduction = score !== undefined ? 100 - score : undefined;
   const penalizedFactors = assessment?.factors
@@ -753,9 +754,9 @@ function MethodologySection({ assessment, latest, previous }) {
     {
       metric: "Facility Exposure Ratio",
       formula: "(Requested Loan Amount / Revenue) × 100",
-      values: `Loan Facility: ₹${loanAmt} Cr, Annual Revenue: ₹${latest.revenue.toLocaleString()} Cr`,
+      values: `Loan Facility: ₹${loanAmt} Cr, Annual Revenue: ₹${latest.revenue.toLocaleString()} Cr (Band: ${exposureBand})`,
       result: `${exposureRatioVal}% Exposure`,
-      notes: `Deduction: -${exposureDeduction} pts (≤2%: 0, >2-5%: -5, >5-10%: -10, >10%: -20).`,
+      notes: `Deduction: -${exposureDeduction} pts (≤1%: 0, >1-2%: -3, >2-4%: -7, >4-6%: -11, >6%: -16).`,
     },
     {
       metric: "Credit Risk Score",
