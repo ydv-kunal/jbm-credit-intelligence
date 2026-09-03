@@ -244,6 +244,7 @@ The scoring engine evaluates corporate creditworthiness starting from a baseline
 | **Free Cash Flow** | `Operating Cash Flow - Capex` | FCF ≥ 0: `0 pts penalty`<br>FCF < 0: `-15 pts penalty` |
 | **Working Capital** | Collection Period (`Debtor Days`) | Debtor Days ≤ 90d: `0 pts penalty`<br>Debtor Days > 90d: `-12 pts penalty` |
 | **Leverage** | `Borrowings / Revenue` | Debt/Revenue ≤ 50%: `0 pts penalty`<br>Debt/Revenue > 50%: `-10 pts penalty` |
+| **Facility Exposure** | `(Requested Loan Amount / FY2026 Revenue) * 100` | Ratio ≤ 2%: `0 pts penalty`<br>Ratio > 2% & ≤ 5%: `-5 pts penalty`<br>Ratio > 5% & ≤ 10%: `-10 pts penalty`<br>Ratio > 10%: `-20 pts penalty` |
 
 ### Score Thresholds & Recommendation Engine
 

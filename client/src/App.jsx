@@ -696,6 +696,10 @@ function MethodologySection({ assessment, latest, previous }) {
   const score = assessment?.score;
   const decision = assessment?.decision;
 
+  const loanAmt = assessment?.assessment?.loanAmount || 1;
+  const exposureRatioVal = ((loanAmt / latest.revenue) * 100).toFixed(2);
+  const exposureDeduction = assessment?.metrics?.facilityExposureDeduction ?? 0;
+
   const scoreDeduction = score !== undefined ? 100 - score : undefined;
   const penalizedFactors = assessment?.factors
     ? assessment.factors
@@ -745,6 +749,13 @@ function MethodologySection({ assessment, latest, previous }) {
       values: `Debtor Days: ${latest.debtorDays}d, Inventory: ${latest.inventoryDays}d, Payables: ${latest.payableDays}d`,
       result: `${cccVal} Days`,
       notes: "Debtor days > 90d incurs a -12 point deduction.",
+    },
+    {
+      metric: "Facility Exposure Ratio",
+      formula: "(Requested Loan Amount / Revenue) × 100",
+      values: `Loan Facility: ₹${loanAmt} Cr, Annual Revenue: ₹${latest.revenue.toLocaleString()} Cr`,
+      result: `${exposureRatioVal}% Exposure`,
+      notes: `Deduction: -${exposureDeduction} pts (≤2%: 0, >2-5%: -5, >5-10%: -10, >10%: -20).`,
     },
     {
       metric: "Credit Risk Score",
